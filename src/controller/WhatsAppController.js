@@ -54,20 +54,20 @@ class WhatsAppController {
             return this.classList.contains(name);
         }
 
-        HTMLFormElement.prototype.getForm = function(){
+        HTMLFormElement.prototype.getForm = function () {
             return new FormData(this);
         }
-        
-        HTMLFormElement.prototype.toJSON = function(){
+
+        HTMLFormElement.prototype.toJSON = function () {
             let json = {};
-            this.getForm().forEach((value,key) => {
+            this.getForm().forEach((value, key) => {
                 json[key] = value;
             });
             return json;
         }
     }
 
-    initEvents(){
+    initEvents() {
         this.el.myPhoto.on('click', e => {
             this.closeAllLeftPanel();
             this.el.panelEditProfile.show();
@@ -79,7 +79,7 @@ class WhatsAppController {
         this.el.btnNewContact.on('click', e => {
             this.closeAllLeftPanel();
             this.el.panelAddContact.show();
-            setTimeout(() =>{
+            setTimeout(() => {
                 this.el.panelAddContact.addClass('open');
             }, 300);
         });
@@ -96,8 +96,8 @@ class WhatsAppController {
             this.el.inputProfilePhoto.click();
         });
 
-        this.el.inputNamePanelEditProfile.on('keypress', e=> {
-            if (e.key === 'Enter'){
+        this.el.inputNamePanelEditProfile.on('keypress', e => {
+            if (e.key === 'Enter') {
                 e.preventDefault();
                 this.el.btnSavePanelEditProfile.click();
             }
@@ -111,9 +111,47 @@ class WhatsAppController {
             e.preventDefault();
             let formData = new FormData(this.el.formPanelAddContact)
         });
+
+        this.el.contactsMessagesList.querySelectorAll('.contact-item').forEach(item => {
+            item.on('click', e => {
+                this.el.home.hide();
+                this.el.main.css({
+                    display: 'flex'
+                });
+            });
+        });
+
+        this.el.btnAttach.on('click', e => {
+            e.stopPropagation();
+            this.el.menuAttach.addClass('open');
+            document.addEventListener('click', this.CloserMenuAttach.bind(this))
+        });
+
+        this.el.btnAttachPhoto.on('click', e => {
+            console.log('photo')
+            // this.el.menuAttach.addClass('open');
+        });
+        this.el.btnAttachCamera.on('click', e => {
+            console.log('camera')
+            // this.el.menuAttach.addClass('open');
+        });
+        this.el.btnAttachDocument.on('click', e => {
+            console.log('Document')
+            // this.el.menuAttach.addClass('open');
+        });
+        this.el.btnAttachContact.on('click', e => {
+            console.log('Contact')
+            // this.el.menuAttach.addClass('open');
+        });
+
     }
 
-    closeAllLeftPanel(){
+    CloserMenuAttach(e){
+        document.removeEventListener('click', this.CloserMenuAttach);
+        this.el.menuAttach.removeClass('open');
+    }
+
+    closeAllLeftPanel() {
         this.el.panelAddContact.hide();
         this.el.panelEditProfile.hide();
 
