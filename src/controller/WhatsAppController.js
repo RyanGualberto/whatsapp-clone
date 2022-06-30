@@ -198,7 +198,7 @@ class WhatsAppController {
         });
 
         this.el.inputText.on('keypress', e => {
-            if (e.key=== 'Enter' && !e.ctrlKey){
+            if (e.key === 'Enter' && !e.ctrlKey) {
                 e.preventDefault();
                 this.el.btnSend.click();
             }
@@ -225,10 +225,23 @@ class WhatsAppController {
         });
 
         this.el.panelEmojis.querySelectorAll('.emojik').forEach(emoji => {
+
             emoji.on('click', e => {
-                console.log(emoji.dataset.unicode);
+                let img = this.el.imgEmojiDefault.cloneNode();
+                img.style.cssText = emoji.style.cssText;
+                img.dataset.unicode = emoji.dataset.unicode;
+                img.alt = emoji.dataset.unicode;
+
+                emoji.classList.forEach(name => {
+                    img.classList.add(name)
+                });
+
+                this.el.inputText.appendChild(img);
+                this.el.inputText.dispatchEvent(new Event('keyup'));
             });
         });
+
+
     }
 
     startRecordMicrophoneTime() {
