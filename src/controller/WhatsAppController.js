@@ -1,5 +1,5 @@
-import {Format} from './../utils/Format';
-import {CameraController} from './CameraController';
+import { Format } from './../utils/Format';
+import { CameraController } from './CameraController';
 
 export class WhatsAppController {
     constructor() {
@@ -158,8 +158,29 @@ export class WhatsAppController {
         });
 
         this.el.btnTakePicture.on('click', e => {
-            console.log('take picture');
-        })
+            let dataUrl = this._camera.takePicture();
+
+            console.log('picture');
+
+            this.el.pictureCamera.src = dataUrl;
+            this.el.pictureCamera.show();
+            this.el.videoCamera.hide();
+            this.el.btnReshootPanelCamera.show();
+            this.el.containerTakePicture.hide();
+            this.el.containerSendPicture.show();
+        });
+
+        this.el.btnReshootPanelCamera.on('click', e => {
+            this.el.pictureCamera.hide();
+            this.el.videoCamera.show();
+            this.el.btnReshootPanelCamera.hide();
+            this.el.containerTakePicture.show();
+            this.el.containerSendPicture.hide();
+        });
+
+        this.el.btnSendPicture.on('click', e =>{
+            console.log('picture:', this.el.pictureCamera.src)
+        });
 
         this.el.btnAttachDocument.on('click', e => {
             this.closeAllMainPanel();
@@ -245,7 +266,7 @@ export class WhatsAppController {
                     this.el.inputText.focus();
                     cursor = window.getSelection()
                 }
-                
+
                 let range = document.createRange();
                 range = cursor.getRangeAt(0);
                 range.deleteContents();
