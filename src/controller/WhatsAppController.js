@@ -270,6 +270,10 @@ export class WhatsAppController {
             this.el.btnSendMicrophone.hide();
             this.startRecordMicrophoneTime();
             this._microphoneController = new MicrophoneController();
+
+            this._microphoneController.on('play', audio =>{
+                console.log('recebi o play', audio);
+            })
         });
 
         this.el.btnCancelMicrophone.on('click', e => {
@@ -277,7 +281,7 @@ export class WhatsAppController {
         });
 
         this.el.btnFinishMicrophone.on('click', e => {
-            this._microphoneController.stop();
+            this._microphoneController.stop();  
             this.closeRecordMicrophone();
 
         });
