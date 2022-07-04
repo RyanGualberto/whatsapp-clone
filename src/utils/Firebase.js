@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore/lite'
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 export class Firebase {
@@ -12,10 +12,6 @@ export class Firebase {
             messagingSenderId: "724171599588",
             appId: "1:724171599588:web:a24a9beb99a3d18ceb86f1"
         });
-    }
-
-    static db() {
-        return getFirestore(this.firebaseApp);
     }
 
     initAuth() {
@@ -33,6 +29,14 @@ export class Firebase {
             }).catch(err => {
                 f(err);
             })
+        });
+    }
+
+    saveUser(user) {
+        return addDoc(collection(getFirestore(this.firebaseApp), 'users'), {
+            name: user['name'],
+            email: user['email'],
+            photo: user['photo']
         });
     }
 }

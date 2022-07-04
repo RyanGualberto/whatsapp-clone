@@ -3,6 +3,7 @@ import { CameraController } from './CameraController';
 import { MicrophoneController } from './MicrophoneController';
 import { DocumentPreviewController } from './DocumentPreviewController';
 import { Firebase } from './../utils/Firebase';
+import { User } from '../model/User';
 
 export class WhatsAppController {
     constructor() {
@@ -14,17 +15,25 @@ export class WhatsAppController {
         this.initEvents();
     }
 
-    initAuth(){
+    initAuth() {
         this._firebase.initAuth().then(response => {
-            this._user = response.user;
-            this.el.appContent.css({
-                display: 'flex'
-            });
-        }).catch( err => {
-            console.error(err);
+
+            console.log(response.user)
+            console.log(response.user.displayName)
+            console.log(response.user.email)
+            console.log(response.user.photoURL)
+            this._firebase.saveUser(new User(
+                response.user.displayName,
+                response.user.email,
+                response.user.photoURL)
+            );
+        }).catch(error => {
+            console.error(error);
+            //alert("Can't continue without auth");
+            //this.initAuth();
         });
     }
-    
+
     loadElements() {
         this.el = {};
         document.querySelectorAll('[id]').forEach(element => {
@@ -210,7 +219,7 @@ export class WhatsAppController {
 
         this.el.inputDocument.on('change', e => {
             if (this.el.inputDocument.files.length) {
-                
+
                 let file = this.el.inputDocument.files[0];
                 console.log(file)
                 console.log(file.type)
@@ -284,7 +293,7 @@ export class WhatsAppController {
             this.el.recordMicrophone.show();
             this.el.btnSendMicrophone.hide();
             this._microphoneController = new MicrophoneController();
-            this._microphoneController.on('ready', audio =>{
+            this._microphoneController.on('ready', audio => {
                 console.log('ready event');
                 this._microphoneController.startRecorder();
             });
@@ -335,6 +344,7 @@ export class WhatsAppController {
 
             emoji.on('click', e => {
                 let img = this.el.imgEmojiDefault.cloneNode();
+
                 img.style.cssText = emoji.style.cssText;
                 img.dataset.unicode = emoji.dataset.unicode;
                 img.alt = emoji.dataset.unicode;
@@ -346,17 +356,18 @@ export class WhatsAppController {
                 let cursor = window.getSelection();
                 if (!cursor.focusNode || !cursor.focusNode.id == 'input-text') {
                     this.el.inputText.focus();
-                    cursor = window.getSelection()
+                    cursor = window.getSelection();
                 }
 
                 let range = document.createRange();
                 range = cursor.getRangeAt(0);
                 range.deleteContents();
-                let frag = document.createDocumentFragment();
-                frag.appendChild(img);
-                range.insertNode(frag);
-                range.setStartAfter(img);
 
+                let fragment = document.createDocumentFragment();
+                fragment.appendChild(emoji);
+
+                range.insertNode(fragment);
+                range.setStartAfter(emoji);
                 this.el.inputText.dispatchEvent(new Event('keyup'));
             });
         });
@@ -377,6 +388,10 @@ export class WhatsAppController {
     CloserMenuAttach(e) {
         document.removeEventListener('click', this.CloserMenuAttach);
         this.el.menuAttach.removeClass('open');
+    }
+
+    addEmoji() {
+
     }
 
     closeAllLeftPanel() {
