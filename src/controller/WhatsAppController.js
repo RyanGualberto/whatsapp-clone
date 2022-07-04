@@ -17,16 +17,33 @@ export class WhatsAppController {
 
     initAuth() {
         this._firebase.initAuth().then(response => {
-
+            
+            let title = document.querySelector('title').innerHTML = response.user.displayName + ' - WhatsApp Clone';
+            let userName = this.el.inputNamePanelEditProfile.innerHTML = response.user.displayName;
+            if (response.user.photoURL) {         
+                let photo = this.el.imgPanelEditProfile;
+                photo.src = response.user.photoURL;
+                photo.show();
+                this.el.imgDefaultPanelEditProfile.hide();
+                let photo2 = this.el.myPhoto.querySelector('img')
+                photo2.src = response.user.photoURL;
+                photo2.show();
+            }
             console.log(response.user)
             console.log(response.user.displayName)
             console.log(response.user.email)
             console.log(response.user.photoURL)
+            console.log(response.user.uid)
+            response.user.uid = response.user.email;
             this._firebase.saveUser(new User(
+                response.user.uid,
                 response.user.displayName,
                 response.user.email,
                 response.user.photoURL)
             );
+            this.el.appContent.css({
+                display: 'flex'
+            })
         }).catch(error => {
             console.error(error);
             //alert("Can't continue without auth");
