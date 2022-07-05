@@ -16,4 +16,15 @@ export class Format {
             return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
     }
+
+    static dateToTime(date, locale = 'pt-BR'){
+        return date.toLocaleTimeString(locale, {
+            hours: '2-digit',
+            minutes: '2-digit'
+        })
+    }
+
+    static timeMessage(timeStamp){
+        return (timeStamp && typeof timeStamp.toDate === 'function') ? Format.dateToTime(timeStamp.toDate()) : ''
+    }
 }
