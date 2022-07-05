@@ -5,6 +5,7 @@ import { DocumentPreviewController } from './DocumentPreviewController';
 import { Firebase } from './../utils/Firebase';
 import { User } from '../model/User';
 import { Chat } from '../model/Chat';
+import { Message } from '../model/Message';
 
 export class WhatsAppController {
     constructor() {
@@ -51,7 +52,7 @@ export class WhatsAppController {
     }
 
     initContacts() {
-       
+
         this._user.on('contactschange', docs => {
             this.el.contactsMessagesList.innerHTML = '';
             docs.forEach(doc => {
@@ -59,7 +60,7 @@ export class WhatsAppController {
                 let div = document.createElement('div');
 
                 div.className = 'contact-item'
-        
+
                 div.innerHTML = `
                                                         <div class="dIyEr">
                                                             <div class="_1WliW" style="height: 49px; width: 49px;">
@@ -84,7 +85,7 @@ export class WhatsAppController {
                                                                     <span dir="auto" title="${contact.name}" class="_1wjpf">${contact.name}</span>
                                                                 </div>
                                                                 <div class="_3Bxar">
-                                                                    <span class="_3T2VG">${contact.lastMessageTime  }</span>
+                                                                    <span class="_3T2VG">${contact.lastMessageTime}</span>
                                                                 </div>
                                                             </div>
                                                             <div class="_1AwDx">
@@ -121,24 +122,30 @@ export class WhatsAppController {
                 }
 
                 div.on('click', e => {
-                    this.el.activeName.innerHTML = contact.name;
-                    this.el.activeStatus.innerHTML = contact.status;
-
-                    if (contact.photo) {
-                        let img = this.el.activePhoto;
-                        img.src = contact.photo;
-                        img.show();
-                    }
-
-                    this.el.home.hide();
-                    this.el.main.css({
-                        display: 'flex'
-                    });
+                    this.setActiveChat(contact);
                 });
                 this.el.contactsMessagesList.appendChild(div)
             })
         });
         this._user.getContacts();
+    }
+
+    setActiveChat(contact) {
+        this._contactActive = contact;
+
+        this.el.activeName.innerHTML = contact.name;
+        this.el.activeStatus.innerHTML = contact.status;
+
+        if (contact.photo) {
+            let img = this.el.activePhoto;
+            img.src = contact.photo;
+            img.show();
+        }
+
+        this.el.home.hide();
+        this.el.main.css({
+            display: 'flex'
+        });
     }
 
     loadElements() {
@@ -463,6 +470,14 @@ export class WhatsAppController {
         });
 
         this.el.btnSend.on('click', e => {
+            Message.send(
+                this._contactActive.chatId,
+                this._user.email,
+                'text',
+                this.el.inputText.innerHTML
+            );
+            this.el.inputText.innerHTML = '';
+            this.el.panelEmojis.removeClass('open');
             console.log(this.el.inputText.innerHTML)
         });
 

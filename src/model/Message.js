@@ -1,24 +1,25 @@
+import { Firebase } from "../utils/Firebase";
 import { Model } from "./Model";
 
-export class Message extends Model{
-    constructor(){
+export class Message extends Model {
+    constructor() {
         super();
     }
 
 
     get content() { return this._data.content; }
-    set content(value) { return this._data.content = value;}
+    set content(value) { return this._data.content = value; }
 
     get type() { return this._data.type; }
-    set type(value) { return this._data.type = value;}
+    set type(value) { return this._data.type = value; }
 
     get timeStamp() { return this._data.timeStamp; }
-    set timeStamp(value) { return this._data.timeStamp = value;}
+    set timeStamp(value) { return this._data.timeStamp = value; }
 
     get status() { return this._data.status; }
-    set status(value) { return this._data.status = value;}
+    set status(value) { return this._data.status = value; }
 
-    getViewElement(me = true){
+    getViewElement(me = true) {
 
         let div = document.createElement('div');
         div.className = 'message';
@@ -74,7 +75,7 @@ export class Message extends Model{
 
                                             </div>
                 `;
-            break;
+                break;
 
             case 'image':
                 div.innerHTML = `
@@ -134,7 +135,7 @@ export class Message extends Model{
                                                 </div>
                                             </div>
                 `;
-            break;
+                break;
 
             case 'document':
                 div.innerHTML = `
@@ -187,7 +188,7 @@ export class Message extends Model{
                                                 </div>
                                             </div>
                 `;
-            break;
+                break;
 
             case 'audio':
                 div.innerHTML = `
@@ -282,7 +283,7 @@ export class Message extends Model{
                                                 </div>
                                             </div>
                 `;
-            break;
+                break;
 
             default:
                 div.innerHTML = `
@@ -301,12 +302,29 @@ export class Message extends Model{
                                                 </div>
                                             </div>
                 `;
-            break;
+                break;
 
         }
 
         let className = (me) ? 'message-out' : 'message-in'
         div.firstElementChild.classList.add(className);
         return div;
+    }
+
+    static send(chatId, from, type, content) {
+        Message.getRef(chatId).add({
+            content,
+            timeStamp: new Date(),
+            status: 'wait',
+            type,
+            from
+        });
+    }
+
+    static getRef(chatId) {
+        return Firebase.db()
+            .collection('chats')
+            .doc(chatId)
+            .collection('messages');
     }
 }
