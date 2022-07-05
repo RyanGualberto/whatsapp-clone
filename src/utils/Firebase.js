@@ -1,42 +1,53 @@
-import { initializeApp } from 'firebase/app'
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+const firebase = require('firebase');
+require('firebase/firestore');
 
 export class Firebase {
     constructor() {
-        this.firebaseApp = initializeApp({
+        this._config = {
             apiKey: "AIzaSyBlR2t-hiMKdi1fu8v_u5MaTbAfXTV0DZQ",
             authDomain: "whatsapp-clone-rv.firebaseapp.com",
             projectId: "whatsapp-clone-rv",
             storageBucket: "whatsapp-clone-rv.appspot.com",
             messagingSenderId: "724171599588",
             appId: "1:724171599588:web:a24a9beb99a3d18ceb86f1"
-        });
+        };
+
+        this.init();
+    }
+
+    init() {
+        if (!window._initializedFirebase) {
+            firebase.initializeApp(this._config);
+            firebase.firestore().settings({
+                timestampsInSnapshots: true
+            })
+            window._initializedFirebase = true;
+        }
+    }
+
+    static db() {
+        return firebase.firestore();
+    }
+
+    static hd() {
+        return firebase.storage();
     }
 
     initAuth() {
         return new Promise((s, f) => {
-            let authenticate = getAuth();
 
-            signInWithPopup(authenticate, new GoogleAuthProvider()).then(result => {
+            let provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then(result => {
 
                 let user = result.user;
-                let token = result._tokenResponse.oauthAccessToken;
+                let token = result.credential.accessToken;
                 s({
-                   user, 
-                   token
+                    user, 
+                    token
                 });
             }).catch(err => {
                 f(err);
             })
-        });
-    }
-
-    saveUser(user) {
-        return addDoc(collection(getFirestore(this.firebaseApp), 'users'), {
-            name: user['name'],
-            email: user['email'],
-            photo: user['photo']
         });
     }
 }
