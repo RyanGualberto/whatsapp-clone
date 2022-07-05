@@ -96,14 +96,8 @@ export class Message extends Model {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <img src="#" class="_1JVSX message-photo" style="width: 100%; display:none">
+                                                            <img src="${this.content}" class="_1JVSX message-photo" style="width: 100%; display:none">
                                                             <div class="_1i3Za"></div>
-                                                        </div>
-                                                        <div class="message-container-legend">
-                                                            <div class="_3zb-j ZhF0n">
-                                                                <span dir="ltr" class="selectable-text invisible-space copyable-text message-text">Texto
-                                                                    da foto</span>
-                                                            </div>
                                                         </div>
                                                         <div class="_2TvOE">
                                                             <div class="_1DZAH text-white" role="button">
@@ -123,6 +117,16 @@ export class Message extends Model {
                                                 </div>
                                             </div>
                 `;
+
+
+                div.querySelector('.message-photo').on('load', e => {
+                    div.querySelector('.message-photo').show();
+                    div.querySelector('._340lu').hide();
+                    div.querySelector('.3v3PK').css({
+                        height: 'auto'
+                    });
+
+                });
                 break;
 
             case 'document':
@@ -284,14 +288,39 @@ export class Message extends Model {
         if (me) {
             className = 'message-out';
             div.querySelector('.message-time').parentElement.appendChild(this.getStatusViewElement());
-            this.getStatusViewElement(); 
+            this.getStatusViewElement();
         }
         div.firstElementChild.classList.add(className);
         return div;
     }
 
+    static sendImage(chatId, from, file) {
+
+        return new Promise((s, f) => {
+
+            let uploadTask = Firebase.hd().ref(from).child(`${Date.now()}_${file.name}`).put(file);
+
+            uploadTask.on('state_changed', e => {
+                console.info('upload', e);
+            }, err => {
+                console.error(err);
+            }, () => {
+                Message.send(
+                    chatId,
+                    from,
+                    'image',
+                    uploadTask.snapshot.downloadURL
+                ).then(() => {
+                    s();
+                }).catch(err => {
+                    console.error(err);
+                });
+            })
+        });
+    }
+
     static send(chatId, from, type, content) {
-        
+
         return new Promise((s, f) => {
 
             Message.getRef(chatId).add({
@@ -310,7 +339,7 @@ export class Message extends Model {
                 });
             });
         });
-        
+
     }
 
     static getRef(chatId) {
@@ -335,8 +364,8 @@ export class Message extends Model {
                     `;
                 break;
 
-            case 'sent': 
-            div.innerHTML = `
+            case 'sent':
+                div.innerHTML = `
                  <span data-icon="msg-check">
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 15" width="16" height="15">
                          <path fill="#859479" d="M10.91 3.316l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z">

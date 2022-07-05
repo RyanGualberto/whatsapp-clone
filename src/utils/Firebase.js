@@ -7,7 +7,7 @@ export class Firebase {
             apiKey: "AIzaSyBlR2t-hiMKdi1fu8v_u5MaTbAfXTV0DZQ",
             authDomain: "whatsapp-clone-rv.firebaseapp.com",
             projectId: "whatsapp-clone-rv",
-            storageBucket: "whatsapp-clone-rv.appspot.com",
+            storageBucket: "gs://whatsapp-clone-rv.appspot.com",
             messagingSenderId: "724171599588",
             appId: "1:724171599588:web:a24a9beb99a3d18ceb86f1"
         };
