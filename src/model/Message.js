@@ -1,5 +1,6 @@
 import { Firebase } from "../utils/Firebase";
 import { Format } from "../utils/Format";
+import { Upload } from "../utils/Upload";
 import { Model } from "./Model";
 
 export class Message extends Model {
@@ -244,7 +245,7 @@ export class Message extends Model {
                                                                         <span class="nDKsM" style="width: 0%;"></span>
                                                                         <input type="range" min="0" max="100" class="_3geJ8" value="0">
                                                                         <audio src="${this.content}" preload="auto"></audio>
-                                                                    </div>
+                                                                    </div> 
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -426,21 +427,7 @@ export class Message extends Model {
 
     static upload(file, from) {
 
-        return new Promise((s, f) => {
-            let uploadTask = Firebase.hd()
-                .ref(from)
-                .child(`${Date.now()}_${file.name}`)
-                .put(file);
-            uploadTask.on('state_changed', () => { }, error => {
-                reject(error);
-            }, () => {
-                uploadTask.snapshot.ref.getDownloadURL().then(url => {
-                    s(url);
-                }).catch(error => {
-                    f(error);
-                })
-            });
-        })
+        return Upload.send(file, from);
 
     }
 
