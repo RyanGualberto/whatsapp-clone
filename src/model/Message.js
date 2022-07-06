@@ -85,7 +85,7 @@ export class Message extends Model {
                                                         </div>
                                                         <div class="_3a5-b">
                                                             <div class="_1DZAH" role="button">
-                                                                <span class="message-time">${Format.timeMessage(this.timeStamp)}</span>
+                                                                <span class="message-time"></span>
                                                             </div>
                                                         </div>
                                                     </div>
