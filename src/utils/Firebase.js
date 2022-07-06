@@ -40,7 +40,7 @@ export class Firebase {
             firebase.auth().signInWithPopup(provider).then(result => {
 
                 let user = result.user;
-                let token = result.credential;
+                let token = result.credential.idToken;
                 s({
                     user, 
                     token

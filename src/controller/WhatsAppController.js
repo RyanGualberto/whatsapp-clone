@@ -19,7 +19,7 @@ export class WhatsAppController {
 
     initAuth() {
         this._firebase.initAuth().then(response => {
-
+             console.log(response)
             this._user = new User(response.user.email);
             this._user.on('datachange', data => {
 
