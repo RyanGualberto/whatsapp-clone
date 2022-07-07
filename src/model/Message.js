@@ -412,7 +412,7 @@ export class Message extends Model {
 
         return new Promise((s, f) => {
 
-            Message.upload(file, from).then(() => {
+            Message.upload(file, from).then(url => {
                 Message.send(
                     chatId,
                     from,
